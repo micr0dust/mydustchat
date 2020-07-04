@@ -1,0 +1,45 @@
+<html lang="zh-hant">
+
+<head>
+  <meta charset="UTF-8">
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+</head>
+
+<body>
+  <script>
+    var socket = io.connect();
+    let name;
+
+    socket.on('user', function (user) {
+      if (!name) name = "人造人" + user + "號";
+    });
+    socket.on('chat', function (chat) {
+      var str = ""
+      for (var i = 1; i < chat.length; i++)
+        str += '<p>' + htmlEncode(chat[i].name) + ": " + htmlEncode(chat[i].text) + '</p>';
+      $('#chat').html(str);
+    });
+
+    $(document).ready(function () {
+      $('#text').keypress(function (e) {
+        if (e.keyCode === 13) {
+          let txt = $("#text").val();
+          socket.emit('client_data', {
+            'name': name,
+            'text': txt,
+          });
+          $("#text").val("");
+        }
+      });
+    });
+
+    function htmlEncode(value) {
+      return $('<div/>').text(value).html();
+    }
+  </script>
+  <textarea id="text"></textarea>
+  <div id="chat"></div>
+</body>
+
+</html>
