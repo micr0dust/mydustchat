@@ -33,7 +33,7 @@ var server = http.createServer(function (request, response) {
   }
 });
 
-server.listen(8001);
+server.listen(3000);
 
 var serv_io = io.listen(server);
 serv_io.set('log level', 1); // 關閉 debug 訊息
