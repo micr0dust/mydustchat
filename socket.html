@@ -16,7 +16,7 @@
     });
     socket.on('chat', function (chat) {
       var str = ""
-      for (var i = 1; i < chat.length; i++)
+      for (var i = 0; i < chat.length; i++)
         str += '<p>' + htmlEncode(chat[i].name) + ": " + htmlEncode(chat[i].text) + '</p>';
       $('#chat').html(str);
     });

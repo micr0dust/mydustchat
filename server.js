@@ -40,6 +40,7 @@ serv_io.set('log level', 1); // 關閉 debug 訊息
 
 let content = [];
 let user_num = 0;
+content.push({ "name": "[伺服器]", "text": "歡迎來到此聊天室!" });
 
 serv_io.sockets.on('connection', function (socket) {
   setInterval(() => {
