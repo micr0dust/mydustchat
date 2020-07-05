@@ -33,7 +33,7 @@ var server = http.createServer(function (request, response) {
   }
 });
 
-server.listen("https://mydustchat.herokuapp.com/socket.io/socket.io.js");
+server.listen(process.env.PORT || 3000);
 
 var serv_io = io.listen(server);
 serv_io.set('log level', 1); // 關閉 debug 訊息
