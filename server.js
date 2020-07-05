@@ -48,7 +48,7 @@ serv_io.sockets.on('connection', function (socket) {
   }, 500);
   // 接收來自於瀏覽器的資料
   socket.on('client_data', function (data) {
-    let txt=data.text
+    let txt=data.text;
     content.push({ "name": data.name, "text": txt });
     if(content.length>10) content.shift();
     socket.emit('chat', content);
