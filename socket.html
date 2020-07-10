@@ -4,32 +4,69 @@
   <meta charset="UTF-8">
   <script src="/socket.io/socket.io.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
 </head>
 
 <body>
+  <style>
+
+  </style>
+  <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white">Navbar</nav>
+  <div class="container-fluid">
+    <br />
+    <div id="chat"></div>
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
+      <div class="input-group-append">
+        <button class="btn btn-success" id="submit">>></button>
+      </div>
+    </div>
+  </div>
+
   <script>
     var socket = io.connect();
     let name;
 
-    socket.on('user', function (user) {
-      if (!name) name = "人造人" + user + "號";
+    socket.on('connect', () => {
+      socket.emit('ip', {
+        'ip': returnCitySN['cip'],
+      });
     });
-    socket.on('chat', function (chat) {
-      var str = ""
-      for (var i = 0; i < chat.length; i++)
-        str += '<p>' + htmlEncode(chat[i].name) + ": " + htmlEncode(chat[i].text) + '</p>';
+
+    socket.on('chat', function (data) {
+      if (data.user) {
+        name = data.user;
+        $('#navbar').html(name);
+      }
+      let str = ""
+      for (var i = 0; i < data.chat.length; i++) {
+        let speaker = htmlEncode(data.chat[i].name);
+        let content = htmlEncode(data.chat[i].text);
+        if (data.chat[i].name === "伺服器") {
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-danger text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><br/>';
+        } else if (data.chat[i].name == name) {
+          str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div><br/>';
+        } else {
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><br/>';
+        }
+      }
+
       $('#chat').html(str);
     });
 
     $(document).ready(function () {
-      $('#text').keypress(function (e) {
+      $('#txt').keydown(function (e) {
         if (e.keyCode === 13) {
-          let txt = $("#text").val();
+          let txt = $("#txt").val();
+          if (txt === "") return;
+          if(txt.length>3000) return alert("不能多於3000個字("+txt.length+"/3000)");
+          document.getElementById("txt").value = "";
           socket.emit('client_data', {
-            'name': name,
+            'ip': returnCitySN['cip'],
             'text': txt,
           });
-          $("#text").val("");
         }
       });
     });
@@ -37,9 +74,18 @@
     function htmlEncode(value) {
       return $('<div/>').text(value).html();
     }
+
+    document.getElementById("submit").onclick = function (e) {
+      let txt = $("#txt").val();
+      if (txt === "") return;
+      if(txt.length>3000) return alert("不能多於3000個字("+txt.length+"/3000)");
+      document.getElementById("txt").value = "";
+      socket.emit('client_data', {
+        'ip': returnCitySN['cip'],
+        'text': txt,
+      });
+    };
   </script>
-  <textarea id="text"></textarea>
-  <div id="chat"></div>
 </body>
 
 </html>

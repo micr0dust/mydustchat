@@ -4,7 +4,7 @@ var fs = require('fs');
 var io = require('socket.io'); // 加入 Socket.IO
 
 var server = http.createServer(function (request, response) {
-  console.log('Connection');
+  //console.log('Connection');
   var path = url.parse(request.url).pathname;
 
   switch (path) {
@@ -39,20 +39,37 @@ var serv_io = io.listen(server);
 serv_io.set('log level', 1); // 關閉 debug 訊息
 
 let content = [];
-let user_num = 0;
-content.push({ "name": "[伺服器]", "text": "歡迎來到此聊天室!" });
+let userlist = [];
+let iplist = [];
+let ipnum=0;
+const random = Math.floor(Math.random() * (2^64 - 2 + 1) + 2);
+content.push({ "name": "伺服器", "text": "歡迎來到此聊天室!" });
 
 serv_io.sockets.on('connection', function (socket) {
   setInterval(() => {
-    socket.emit('chat', content);
+    socket.emit('chat', { "chat": content, "user": false });
   }, 500);
   // 接收來自於瀏覽器的資料
   socket.on('client_data', function (data) {
+    let realuser=false;
+    for(i=0;i<iplist.length;i++) if(iplist[i]===data.ip) realuser=true;
+    if(data.text===""||!realuser||data.text.length>3000) return console.log("阻止了一個不法請求");
     let txt=data.text;
-    content.push({ "name": data.name, "text": txt });
+    let ip=data.ip.replace(/\./g,"");
+    content.push({ "name": userlist[ip], "text": txt });
     if(content.length>10) content.shift();
-    socket.emit('chat', content);
+    socket.emit('chat', { "chat": content, "user": false });
+    console.log({ "name": userlist[ip], "text": txt, "ip": ip })
   });
-  user_num++;
-  socket.emit('user', user_num);
+  socket.on('ip', function (data) {
+    let txt=data.ip;
+    iplist[ipnum]=txt;
+    ipnum++;
+    txt=txt.replace(/\./g,"");
+    userlist[txt]=(parseInt(txt)+random).toString(35);
+    console.log(userlist[txt]+"加入了聊天室");
+    content.push({ "name": "伺服器", "text": userlist[txt]+"加入了聊天室" });
+    if(content.length>10) content.shift();
+    socket.emit('chat', { "chat": content, "user": userlist[txt] });
+  });
 });
