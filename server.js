@@ -42,6 +42,7 @@ let content = [];
 let userlist = [];
 let iplist = [];
 let ipnum=0;
+let news=false;
 const random = Math.floor(Math.random() * (2^64 - 2 + 1) + 2);
 content.push({ "name": "伺服器", "text": "歡迎來到此聊天室!" });
 
@@ -53,13 +54,15 @@ serv_io.sockets.on('connection', function (socket) {
   socket.on('client_data', function (data) {
     let realuser=false;
     for(i=0;i<iplist.length;i++) if(iplist[i]===data.ip) realuser=true;
-    if(data.text===""||!realuser||data.text.length>3000) return console.log("阻止了一個不法請求");
+    if(data.text===""||!realuser||data.text.length>300) return console.log("阻止了一個不法請求");
+    news=true;
     let txt=data.text;
     let ip=data.ip.replace(/\./g,"");
     content.push({ "name": userlist[ip], "text": txt });
-    if(content.length>10) content.shift();
-    socket.emit('chat', { "chat": content, "user": false });
+    //if(content.length>50) content.shift();
+    socket.emit('chat', { "chat": content, "user": false, "news": news });
     console.log({ "name": userlist[ip], "text": txt, "ip": ip })
+    news=false;
   });
   socket.on('ip', function (data) {
     let txt=data.ip;
@@ -69,7 +72,7 @@ serv_io.sockets.on('connection', function (socket) {
     userlist[txt]=(parseInt(txt)+random).toString(35);
     console.log(userlist[txt]+"加入了聊天室");
     content.push({ "name": "伺服器", "text": userlist[txt]+"加入了聊天室" });
-    socket.emit('chat', { "chat": content, "user": userlist[txt] });
-    if(content.length>10) content.shift();
+    socket.emit('chat', { "chat": content, "user": userlist[txt] , "news": news });
+    //if(content.length>50) content.shift();
   });
 });

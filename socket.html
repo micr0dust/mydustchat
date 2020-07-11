@@ -2,6 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="/socket.io/socket.io.js"></script>
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -10,13 +11,11 @@
 
 <body>
   <style>
-
   </style>
-  <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white">連線失敗</nav>
   <div class="container-fluid">
-    <br />
-    <div id="chat"></div>
-    <div class="input-group mb-3">
+    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">連線失敗</nav>
+    <div id="chat" class="h-100"></div>
+    <div class="input-group mb-3 fixed-bottom">
       <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
       <div class="input-group-append">
         <button class="btn btn-success" id="submit">>></button>
@@ -28,7 +27,9 @@
   <script>
     var socket = io.connect();
     let name;
-    let Ip;
+    let Ip = "8.8.8.8.7";
+    let down = true;
+    /*
     $.getJSON('https://ipinfo.io/', function (data) {
       Ip = data.ip;
       socket.on('connect', () => {
@@ -40,13 +41,16 @@
         'ip': Ip,
       });
     });
+    */
+
+    socket.on('connect', () => {
+      socket.emit('ip', {
+        'ip': Ip,
+      });
+    });
 
     socket.on('chat', function (data) {
-      if (data.user) {
-        name = data.user;
-        $('#navbar').html(name);
-      }
-      let str = ""
+      let str = "";
       for (var i = 0; i < data.chat.length; i++) {
         let speaker = htmlEncode(data.chat[i].name);
         let content = htmlEncode(data.chat[i].text);
@@ -58,8 +62,15 @@
           str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><br/>';
         }
       }
+      str += '<br/><br/><br/>';
 
       $('#chat').html(str);
+      if (down && data.news) $("html, body").animate({ scrollTop: document.body.scrollHeight }, "slow");
+      if (data.user) {
+        name = data.user;
+        $('#navbar').html(name);
+        window.scrollTo(0, document.body.scrollHeight);
+      }
     });
 
     $(document).ready(function () {
@@ -67,7 +78,7 @@
         if (e.keyCode === 13) {
           let txt = $("#txt").val();
           if (txt === "") return;
-          if (txt.length > 3000) return alert("不能多於3000個字(" + txt.length + "/3000)");
+          if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
           document.getElementById("txt").value = "";
           socket.emit('client_data', {
             'ip': Ip,
@@ -77,6 +88,16 @@
       });
     });
 
+      $(window).scroll(function () {
+        let scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+        //last = $("body").height() - $(window).height() - 50;
+        if (scrollBottom<50) {
+          down = true;
+        } else {
+          down = false;
+        }
+      });
+
     function htmlEncode(value) {
       return $('<div/>').text(value).html();
     }
@@ -84,7 +105,7 @@
     document.getElementById("submit").onclick = function (e) {
       let txt = $("#txt").val();
       if (txt === "") return;
-      if (txt.length > 3000) return alert("不能多於3000個字(" + txt.length + "/3000)");
+      if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
       document.getElementById("txt").value = "";
       socket.emit('client_data', {
         'ip': Ip,
