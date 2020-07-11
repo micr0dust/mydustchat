@@ -6,14 +6,13 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-  <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
 </head>
 
 <body>
   <style>
 
   </style>
-  <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white">Navbar</nav>
+  <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white">連線失敗</nav>
   <div class="container-fluid">
     <br />
     <div id="chat"></div>
@@ -24,14 +23,21 @@
       </div>
     </div>
   </div>
+  <span id="ip"></span>
 
   <script>
     var socket = io.connect();
     let name;
-
-    socket.on('connect', () => {
+    let Ip;
+    $.getJSON('http://ipinfo.io', function (data) {
+      Ip = data.ip;
+      socket.on('connect', () => {
+        socket.emit('ip', {
+          'ip': Ip,
+        });
+      });
       socket.emit('ip', {
-        'ip': returnCitySN['cip'],
+        'ip': Ip,
       });
     });
 
@@ -61,10 +67,10 @@
         if (e.keyCode === 13) {
           let txt = $("#txt").val();
           if (txt === "") return;
-          if(txt.length>3000) return alert("不能多於3000個字("+txt.length+"/3000)");
+          if (txt.length > 3000) return alert("不能多於3000個字(" + txt.length + "/3000)");
           document.getElementById("txt").value = "";
           socket.emit('client_data', {
-            'ip': returnCitySN['cip'],
+            'ip': Ip,
             'text': txt,
           });
         }
@@ -78,10 +84,10 @@
     document.getElementById("submit").onclick = function (e) {
       let txt = $("#txt").val();
       if (txt === "") return;
-      if(txt.length>3000) return alert("不能多於3000個字("+txt.length+"/3000)");
+      if (txt.length > 3000) return alert("不能多於3000個字(" + txt.length + "/3000)");
       document.getElementById("txt").value = "";
       socket.emit('client_data', {
-        'ip': returnCitySN['cip'],
+        'ip': Ip,
         'text': txt,
       });
     };

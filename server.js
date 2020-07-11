@@ -69,7 +69,7 @@ serv_io.sockets.on('connection', function (socket) {
     userlist[txt]=(parseInt(txt)+random).toString(35);
     console.log(userlist[txt]+"加入了聊天室");
     content.push({ "name": "伺服器", "text": userlist[txt]+"加入了聊天室" });
-    if(content.length>10) content.shift();
     socket.emit('chat', { "chat": content, "user": userlist[txt] });
+    if(content.length>10) content.shift();
   });
 });
