@@ -27,9 +27,9 @@
   <script>
     var socket = io.connect();
     let name;
-    let Ip = "8.8.8.8.7";
+    let Ip;
     let down = true;
-    /*
+
     $.getJSON('https://ipinfo.io/', function (data) {
       Ip = data.ip;
       socket.on('connect', () => {
@@ -41,7 +41,6 @@
         'ip': Ip,
       });
     });
-    */
 
     socket.on('connect', () => {
       socket.emit('ip', {

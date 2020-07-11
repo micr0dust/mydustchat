@@ -65,6 +65,7 @@ serv_io.sockets.on('connection', function (socket) {
     news=false;
   });
   socket.on('ip', function (data) {
+    for(i=0;i<iplist.length;i++) if(iplist[i]===data.ip) return;
     let txt=data.ip;
     iplist[ipnum]=txt;
     ipnum++;
