@@ -29,7 +29,7 @@
     var socket = io.connect();
     let name;
     let Ip;
-    $.getJSON('http://ipinfo.io', function (data) {
+    $.getJSON('https://ipinfo.io/', function (data) {
       Ip = data.ip;
       socket.on('connect', () => {
         socket.emit('ip', {
