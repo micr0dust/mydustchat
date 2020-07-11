@@ -13,7 +13,7 @@
   <style>
   </style>
   <div class="container-fluid">
-    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">連線失敗</nav>
+    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">驗證身份中...</nav>
     <div id="chat" class="h-100"></div>
     <div class="input-group mb-3 fixed-bottom">
       <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
@@ -30,16 +30,14 @@
     let Ip;
     let down = true;
 
-    $.getJSON('https://ipinfo.io/', function (data) {
+    $.getJSON("https://api.ipify.org?format=json", function (data) {
       Ip = data.ip;
-      socket.on('connect', () => {
+      setTimeout(function () {
         socket.emit('ip', {
           'ip': Ip,
         });
-      });
-      socket.emit('ip', {
-        'ip': Ip,
-      });
+      }, 3000)
+      console.log(Ip)
     });
 
     socket.on('connect', () => {
@@ -87,15 +85,15 @@
       });
     });
 
-      $(window).scroll(function () {
-        let scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
-        //last = $("body").height() - $(window).height() - 50;
-        if (scrollBottom<50) {
-          down = true;
-        } else {
-          down = false;
-        }
-      });
+    $(window).scroll(function () {
+      let scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
+      //last = $("body").height() - $(window).height() - 50;
+      if (scrollBottom < 50) {
+        down = true;
+      } else {
+        down = false;
+      }
+    });
 
     function htmlEncode(value) {
       return $('<div/>').text(value).html();
