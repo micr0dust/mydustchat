@@ -44,7 +44,7 @@ let iplist = [];
 let ipnum = 0;
 let news = false;
 let reapet = false;
-const random = Math.floor(Math.random() * (2 ^ 64 - 2 + 1) + 2);
+const random = Math.floor(Math.random() * (4294967 - 42949 + 1) + 42949);
 content.push({ "name": "伺服器", "text": "歡迎來到此聊天室!" });
 
 serv_io.sockets.on('connection', function (socket) {
@@ -55,7 +55,7 @@ serv_io.sockets.on('connection', function (socket) {
   socket.on('client_data', function (data) {
     let realuser = false;
     let ip = data.ip.replace(/\./g, "");
-    for (i = 0; i < iplist.length+1; i++) if (iplist[i] === ip) realuser = true;
+    for (i = 0; i < iplist.length + 1; i++) if (iplist[i] === ip) realuser = true;
     if (data.text === "" || !realuser || data.text.length > 300) return console.log("阻止了一個不法請求");
     news = true;
     let txt = data.text;
@@ -69,11 +69,10 @@ serv_io.sockets.on('connection', function (socket) {
     if (!data.ip) return;
     let txt = data.ip;
     txt = txt.replace(/\./g, "");
-    for (i = 0; i < iplist.length; i++) if (iplist[i] === txt) reapet=true;
-    if(reapet){
+    for (i = 0; i < iplist.length; i++) if (iplist[i] === txt) reapet = true;
+    if (reapet) {
       socket.emit('chat', { "chat": content, "user": userlist[txt] });
-      reapet=false;
-      console.log("A");
+      reapet = false;
       return;
     }
     iplist[ipnum] = txt;
