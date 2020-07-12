@@ -1,7 +1,6 @@
 {
   "name": "MyDustChat",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "dependencies": {
     "express": "^4.17.1",
@@ -9,8 +8,19 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "Microdust",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wuilliam104286/mydustchat.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/wuilliam104286/mydustchat/issues"
+  },
+  "homepage": "https://github.com/wuilliam104286/mydustchat#readme",
+  "description": ""
 }
