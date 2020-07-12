@@ -7,9 +7,12 @@
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <link rel="manifest" href="/client/manifest.json">
 </head>
 
 <body>
+  <script src="/client/app.js"></script>
   <style>
   </style>
   <div class="container-fluid">
@@ -29,6 +32,7 @@
     let name;
     let Ip;
     let down = true;
+    let enter = 0;
 
     $.getJSON("https://api.ipify.org?format=json", function (data) {
       Ip = data.ip;
@@ -37,6 +41,15 @@
           'ip': Ip,
         });
       }, 3000)
+    });
+
+    serviceWorker();
+
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function () {
+      OneSignal.init({
+        appId: "6ff3f2e9-a37d-4507-9749-4fc8e9c07d4c",
+      });
     });
 
     socket.on('connect', () => {
@@ -72,6 +85,8 @@
     $(document).ready(function () {
       $('#txt').keydown(function (e) {
         if (e.keyCode === 13) {
+          if (enter === 3) openCreatePostModal();
+          enter++;
           let txt = $("#txt").val();
           if (txt === "") return;
           if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
@@ -99,6 +114,8 @@
     }
 
     document.getElementById("submit").onclick = function (e) {
+      if (enter === 3) openCreatePostModal();
+      enter++;
       let txt = $("#txt").val();
       if (txt === "") return;
       if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
@@ -109,6 +126,29 @@
       });
     };
 
+    var deferredPrompt;
+    window.addEventListener('beforeinstallprompt', function (event) {
+      console.log('安裝視窗跳出來前 阻止它!!');
+      event.preventDefault();
+      deferredPrompt = event;
+      return false;
+    });
+
+    function openCreatePostModal() {
+      console.log('A');
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        console.log('b');
+        deferredPrompt.userChoice.then(function (choiceResult) {
+          console.log(choiceResult.outcome);
+          if (choiceResult.outcome == 'dismissed')
+            console.log('使用者取消安裝');
+          else
+            console.log('使用者安裝');
+        });
+        deferredPrompt = null;
+      }
+    }
   </script>
 </body>
 
