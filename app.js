@@ -1,6 +1,22 @@
 var express = require('express');
 var app = express();
 var serv = require('http').Server(app);
+const webpush = require('web-push');
+const publicVapidKey = 'BNZBI00VOYUDb6GLDjNNsde1n_9T5ZAlM4xSSXNeAEZqbn9GfAuuHjr-iKRvxlFLbp9_nTpcekZbNYyhWPLxjOA';
+const privateVapidKey = 'J9v7emHB7klmCviNWk3Watzx8QoAPnViLH1NjUR3k_E';
+// 此處換成你自己的郵箱
+webpush.setVapidDetails('mailto:mydustchat@gmail.com', publicVapidKey, privateVapidKey);
+app.use(require('body-parser').json());
+
+app.use(require('body-parser').json());
+app.post('/client/subscribe', (req, res) => {
+  const subscription = req.body;
+  res.status(201).json({});
+  const payload = JSON.stringify({title: '新訊息', content: content[content.length-1].text});
+  webpush.sendNotification(subscription, payload).catch(error => {
+    console.error(error.stack);
+  });
+});
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/client/index.html');

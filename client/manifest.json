@@ -1,11 +1,13 @@
 {
     "name": "MyDustChat",
     "short_name": "MyDustChat",
-    "icons": [{
+    "icons": [
+        {
             "src": "./img/MyDustChat.png",
             "type": "image/png",
             "sizes": "256x256"
-    }],
+        }
+    ],
     "start_url": "./index.html",
     "scope": ".",
     "display": "fullscreen",
@@ -14,5 +16,10 @@
     "theme_color": "#000000",
     "description": "online chat app",
     "dir": "ltr",
-    "lang": "zh-Hant-TW"
+    "lang": "zh-Hant-TW",
+    "permissions": {
+        "desktop-notification": {
+            "description": "允許應用程式通知"
+        }
+    }
 }
