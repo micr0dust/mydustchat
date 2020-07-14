@@ -36,7 +36,7 @@ let news = false;
 let reapet = false;
 let Today=new Date();
 let time;
-let date_="" + Today.getFullYear()+ "/" + (Today.getMonth()+1) + "/" + Today.getDate() + "    " + Today.getHours()+Today.getTimezoneOffset()/60 + ":" + Today.getMinutes()+Today.getTimezoneOffset()%60;
+let date_="" + Today.getFullYear()+ "/" + (Today.getMonth()+1) + "/" + Today.getDate() + "    " + Today.getHours()+8 + ":" + Today.getMinutes();
 const random = Math.floor(Math.random() * (4294967 - 42949 + 1) + 42949);
 fs.readFile('save.json', 'utf8', function readFileCallback(err, data) {
   if (err) {
