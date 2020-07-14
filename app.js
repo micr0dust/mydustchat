@@ -35,8 +35,6 @@ let count=0;
 let news = false;
 let reapet = false;
 let Today=new Date();
-let time;
-let date_="" + Today.getFullYear()+ "/" + (Today.getMonth()+1) + "/" + Today.getDate() + "    " + Today.getHours()+8 + ":" + Today.getMinutes();
 const random = Math.floor(Math.random() * (4294967 - 42949 + 1) + 42949);
 fs.readFile('save.json', 'utf8', function readFileCallback(err, data) {
   if (err) {
@@ -45,7 +43,7 @@ fs.readFile('save.json', 'utf8', function readFileCallback(err, data) {
     if (data) {
       obj = JSON.parse(data);
       content = obj;
-      content.push({ "name": "日期", "text": date_ });
+      content.push({ "name": "日期", "text": Today });
       let json = JSON.stringify(content);
       fs.writeFile('save.json', json, 'utf8', function (err) {
         if (err)
@@ -73,7 +71,6 @@ serv_io.sockets.on('connection', function (socket) {
   setInterval(() => {
     socket.emit('chat', { "chat": content, "user": false, "online": serv_io.engine.clientsCount });
     Today=new Date();
-    time = Today.getHours()+8 + ":" + Today.getMinutes().toString().padStart(2,'0');
   }, 500);
   // 接收來自於瀏覽器的資料
   socket.on('client_data', function (data) {
@@ -87,7 +84,7 @@ serv_io.sockets.on('connection', function (socket) {
       for(let i=1;i<script_detect.length;i++) script_detect[ip] = 0;
     }
     if(script_detect[ip]>100) return socket.emit('script', { "type": "bot"});
-    content.push({ "name": userlist[ip], "text": txt, "time": time });
+    content.push({ "name": userlist[ip], "text": txt, "time": Today });
     if(content.length>1000) content.shift();
     socket.emit('chat', { "chat": content, "user": false, "news": news });
     console.log({ "name": userlist[ip], "text": txt, "ip": ip })
@@ -109,8 +106,7 @@ serv_io.sockets.on('connection', function (socket) {
     userlist[txt] = (parseInt(txt) + random).toString(35);
     console.log(userlist[txt] + "加入了聊天室");
     Today=new Date();
-    time = Today.getHours() + ":" + Today.getMinutes().toString().padStart(2,'0');
-    content.push({ "name": "伺服器", "text": userlist[txt] + "加入了聊天室", "time": time });
+    content.push({ "name": "伺服器", "text": userlist[txt] + "加入了聊天室", "time": Today });
     socket.emit('chat', { "chat": content, "user": userlist[txt], "news": news });
     if(content.length>1000) content.shift();
   });
