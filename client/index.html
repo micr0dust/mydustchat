@@ -13,31 +13,29 @@
 <body>
   <script src="/client/app.js"></script>
   <style>
-    .bg-warning{
-      overflow:hidden;
+    .bg-warning {
+      overflow: hidden;
       overflow-wrap: break-word;
     }
   </style>
   <div class="container-fluid">
-    <div class="row">
-      <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a id="user" class="nav-link text-white">確認身分中...</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a id="online" class="nav-link text-white"></a>
-          </li>
-        </ul>
-      </nav>
-      <div id="chat" class="h-100"></div>
-      <div class="input-group mb-3 fixed-bottom">
-        <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
-        <div class="input-group-append">
-          <button class="btn btn-success" id="submit">>></button>
-        </div>
+    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a id="user" class="nav-link text-white">確認身分中...</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a id="online" class="nav-link text-white"></a>
+        </li>
+      </ul>
+    </nav>
+    <div id="chat" class="h-100"></div>
+    <div class="input-group mb-3 fixed-bottom">
+      <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
+      <div class="input-group-append">
+        <button class="btn btn-success" id="submit">>></button>
       </div>
     </div>
   </div>
