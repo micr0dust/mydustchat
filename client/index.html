@@ -15,7 +15,18 @@
   <style>
   </style>
   <div class="container-fluid">
-    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">驗證身份中...</nav>
+    <nav id="navbar" class="navbar navbar-expand-md bg-dark navbar-dark text-white fixed-top">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a id="user" class="nav-link text-white">確認身分中...</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a id="online" class="nav-link text-white"></a>
+        </li>
+      </ul>
+    </nav>
     <div id="chat" class="h-100"></div>
     <div class="input-group mb-3 fixed-bottom">
       <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
@@ -32,6 +43,7 @@
     let Ip;
     let down = true;
     let enter = 0;
+    let first_enter=true;
 
     $.getJSON("https://api.ipify.org?format=json", function (data) {
       Ip = data.ip;
@@ -43,7 +55,7 @@
     });
 
     serviceWorker();
-
+    
     socket.on('connect', () => {
       socket.emit('ip', {
         'ip': Ip,
@@ -52,25 +64,34 @@
 
     socket.on('chat', function (data) {
       let str = "";
+      str += '<br/><br/><br/>';
       for (var i = 0; i < data.chat.length; i++) {
         let speaker = htmlEncode(data.chat[i].name);
         let content = htmlEncode(data.chat[i].text);
         if (data.chat[i].name === "伺服器") {
-          str += '<div class="d-flex flex-row"><div class="p-2 bg-danger text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><br/>';
-        } else if (data.chat[i].name == name) {
-          str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div><br/>';
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-danger text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">'+data.chat[i].time+'</p>';
+        } else if (data.chat[i].name === "日期") {
+          str += '<div class="d-flex flex-column-reverse text-center text-white"><div class="p-2 bg-success">' + content + '</div></div><br/>';
+        } else if (data.chat[i].name === name) {
+          str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div><p class="font-weight-light text-right">'+data.chat[i].time+'</p>';
         } else {
-          str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><br/>';
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">'+data.chat[i].time+'</p>';
         }
       }
       str += '<br/><br/><br/>';
+      if(first_enter){
+        window.scrollTo(0, document.body.scrollHeight);
+        first_enter=false;
+      }
 
       $('#chat').html(str);
       if (down && data.news) $("html, body").animate({ scrollTop: document.body.scrollHeight }, "slow");
       if (data.user) {
         name = data.user;
-        $('#navbar').html(name);
-        window.scrollTo(0, document.body.scrollHeight);
+        $('#user').html(name);
+      }
+      if (data.online) {
+        $('#online').html('在線人數: '+data.online);
       }
     });
 
