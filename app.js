@@ -73,7 +73,7 @@ serv_io.sockets.on('connection', function (socket) {
   setInterval(() => {
     socket.emit('chat', { "chat": content, "user": false, "online": serv_io.engine.clientsCount });
     Today=new Date();
-    time = Today.getHours() + ":" + Today.getMinutes().toString().padStart(2,'0');
+    time = Today.getHours()+8 + ":" + Today.getMinutes().toString().padStart(2,'0');
   }, 500);
   // 接收來自於瀏覽器的資料
   socket.on('client_data', function (data) {
