@@ -61,8 +61,8 @@ serv_io.sockets.on('connection', function (socket) {
   socket.on('disconnect', function () {
     let txt = iplist[socket.id];
     console.log(userlist[txt] + "離開了聊天室");
-    content.push({ "name": "伺服器", "text": userlist[txt] + "離開了聊天室", "time": time });
-    socket.emit('chat', { "chat": content, "user": userlist[txt], "news": news });
+    //content.push({ "name": "伺服器", "text": userlist[txt] + "離開了聊天室", "time": time });
+    //socket.emit('chat', { "chat": content, "user": userlist[txt], "news": news });
     delete iplist[socket.id];
     delete script_detect[socket.id];
     online-=1;
