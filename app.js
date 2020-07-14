@@ -34,7 +34,6 @@ let script_detect = [];
 let count=0;
 let news = false;
 let reapet = false;
-let online=0;
 let Today=new Date();
 let time;
 let date_="" + Today.getFullYear()+ "/" + (Today.getMonth()+1) + "/" + Today.getDate() + "    " + Today.getHours() + ":" + Today.getMinutes();
@@ -65,7 +64,6 @@ serv_io.sockets.on('connection', function (socket) {
     //socket.emit('chat', { "chat": content, "user": userlist[txt], "news": news });
     delete iplist[socket.id];
     delete script_detect[socket.id];
-    online-=1;
     let json = JSON.stringify(content);
     fs.writeFile('save.json', json, 'utf8', function (err) {
       if (err)
@@ -73,7 +71,7 @@ serv_io.sockets.on('connection', function (socket) {
     });
   });
   setInterval(() => {
-    socket.emit('chat', { "chat": content, "user": false, "online": online });
+    socket.emit('chat', { "chat": content, "user": false, "online": serv_io.engine.clientsCount });
     Today=new Date();
     time = Today.getHours() + ":" + Today.getMinutes().toString().padStart(2,'0');
   }, 500);
@@ -114,7 +112,6 @@ serv_io.sockets.on('connection', function (socket) {
     time = Today.getHours() + ":" + Today.getMinutes().toString().padStart(2,'0');
     content.push({ "name": "伺服器", "text": userlist[txt] + "加入了聊天室", "time": time });
     socket.emit('chat', { "chat": content, "user": userlist[txt], "news": news });
-    online++;
     if(content.length>1000) content.shift();
   });
 });
