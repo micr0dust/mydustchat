@@ -1,6 +1,7 @@
 <html lang="zh-hant">
 
 <head>
+  <title>MyDustChat</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="/socket.io/socket.io.js"></script>
@@ -13,8 +14,8 @@
 <body>
   <script src="/client/app.js"></script>
   <style>
-    .bg-warning {
-      overflow: hidden;
+    .bg-warning{
+      overflow:hidden;
       overflow-wrap: break-word;
     }
   </style>
@@ -28,6 +29,9 @@
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           <a id="online" class="nav-link text-white"></a>
+        </li>
+        <li class="nav-item">
+          <button id="install" class="btn btn-success" style="display:none;" onclick="openCreatePostModal()">安裝</button>
         </li>
       </ul>
     </nav>
@@ -46,8 +50,7 @@
     let name;
     let Ip;
     let down = true;
-    let enter = 0;
-    let first_enter = true;
+    let first_enter=true;
 
     $.getJSON("https://api.ipify.org?format=json", function (data) {
       Ip = data.ip;
@@ -59,11 +62,15 @@
     });
 
     serviceWorker();
-
+    
     socket.on('connect', () => {
       socket.emit('ip', {
         'ip': Ip,
       });
+    });
+
+    socket.on('script', () => {
+      window.location.reload();
     });
 
     socket.on('chat', function (data) {
@@ -73,19 +80,19 @@
         let speaker = htmlEncode(data.chat[i].name);
         let content = htmlEncode(data.chat[i].text);
         if (data.chat[i].name === "伺服器") {
-          str += '<div class="d-flex flex-row"><div class="p-2 bg-danger text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">' + data.chat[i].time + '</p>';
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-danger text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">'+data.chat[i].time+'</p>';
         } else if (data.chat[i].name === "日期") {
           str += '<div class="d-flex flex-column-reverse text-center text-white"><div class="p-2 bg-success">' + content + '</div></div><br/>';
         } else if (data.chat[i].name === name) {
-          str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div><p class="font-weight-light text-right">' + data.chat[i].time + '</p>';
+          str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div><p class="font-weight-light text-right">'+data.chat[i].time+'</p>';
         } else {
-          str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">' + data.chat[i].time + '</p>';
+          str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div><p class="font-weight-light">'+data.chat[i].time+'</p>';
         }
       }
       str += '<br/><br/><br/>';
-      if (first_enter) {
+      if(first_enter){
         window.scrollTo(0, document.body.scrollHeight);
-        first_enter = false;
+        first_enter=false;
       }
 
       $('#chat').html(str);
@@ -95,15 +102,13 @@
         $('#user').html(name);
       }
       if (data.online) {
-        $('#online').html('在線人數: '+data.online);
+        $('#online').html('在線人數: '+data.online+'    ');
       }
     });
 
     $(document).ready(function () {
       $('#txt').keydown(function (e) {
         if (e.keyCode === 13) {
-          if (enter === 3) openCreatePostModal();
-          enter++;
           let txt = $("#txt").val();
           if (txt === "") return;
           if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
@@ -131,8 +136,6 @@
     }
 
     document.getElementById("submit").onclick = function (e) {
-      if (enter === 3) openCreatePostModal();
-      enter++;
       let txt = $("#txt").val();
       if (txt === "") return;
       if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
@@ -145,7 +148,7 @@
 
     var deferredPrompt;
     window.addEventListener('beforeinstallprompt', function (event) {
-      console.log('安裝視窗跳出來前 阻止它!!');
+      $("#install").show();
       event.preventDefault();
       deferredPrompt = event;
       return false;
@@ -154,7 +157,6 @@
     function openCreatePostModal() {
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        console.log('b');
         deferredPrompt.userChoice.then(function (choiceResult) {
           console.log(choiceResult.outcome);
           if (choiceResult.outcome == 'dismissed')
