@@ -1,14 +1,12 @@
 {
     "name": "MyDustChat",
     "short_name": "MyDustChat",
-    "icons": [
-        {
-            "src": "./img/MyDustChat.png",
-            "type": "image/png",
-            "sizes": "256x256"
-        }
-    ],
-    "start_url": "./index.html",
+    "icons": [{
+        "src": "./img/MyDustChat.png",
+        "type": "image/png",
+        "sizes": "256x256"
+    }],
+    "start_url": "./",
     "scope": ".",
     "display": "fullscreen",
     "orientation": "portrait-primary",
