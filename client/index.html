@@ -147,11 +147,11 @@
                     str += '<div class="d-flex flex-column-reverse text-center text-white"><div class="p-2 bg-success">' + content + '</div></div><br/>';
                 } else if (data.chat[i].name === name) {
                     if (!isImgUrl(content)) str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
-                    if (isImgUrl(content)) str += '<div class="d-flex flex-row-reverse"><img src="' + content.split('?')[0] + '" width="25%" class="rounded" onerror="this.style.display=\'none\'"><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
+                    if (isImgUrl(content)) str += '<div class="d-flex flex-row-reverse"><img src="' + content.split('?')[0] + '" width="25%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
                     str += '<p class="font-weight-light text-right">' + data.chat[i].time + '</p>'
                 } else {
                     if (!isImgUrl(content)) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div>';
-                    if (isImgUrl(content)) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><img src="' + content.split('?')[0] + '" width="35%" class="rounded" onerror="this.style.display=\'none\'"></div>';
+                    if (isImgUrl(content)) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><img src="' + content.split('?')[0] + '" width="35%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"></div>';
                     str += '<p class="font-weight-light">' + data.chat[i].time + '</p>'
                 }
             }

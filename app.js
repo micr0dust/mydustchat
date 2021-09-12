@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
-//const url = 'mongodb://microdust:ux7e4ywp@127.0.0.1:27017/test';
-const url = "mongodb+srv://microdust:ux7e4ywp@mydustchat.xvwyj.mongodb.net/test?retryWrites=true&w=majority";
+const auth = require('./client/js/auth.js');
+const url = 'mongodb://' + auth.user() + ':' + auth.password() + '@127.0.0.1:27017/test';
+//const url = "mongodb+srv://' + auth.user() + ':' + auth.password() + '@mydustchat.xvwyj.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const dbName = 'test';
 /*
@@ -12,6 +13,7 @@ client.connect(err => {
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
+app.use('/client', express.static(__dirname + '/client'));
 const port = process.env.PORT || 3000
 const server = app.listen(port, function() {
     console.log('Node server is running..');
@@ -24,7 +26,6 @@ app.get('/', function(req, res) {
 app.get('/client', function(req, res) {
     res.redirect('/');
 });
-app.use('/client', express.static(__dirname + '/client'));
 
 
 let content = [];
@@ -89,9 +90,16 @@ serv_io.sockets.on('connection', function(socket) {
             return console.log("阻止了一個不法請求並要求重新連接");
         }
         let txt = data.text;
+        //if (isImgUrl(txt)) isImg(txt);
         ip = have_ip(data.ip, true);
         data_emit(userlist[ip], txt);
     });
+
+    function isImgUrl(imgurl) {
+        if (imgurl.indexOf("http")) return false;
+        return (imgurl.match(/\.(jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif|)/i) != null);
+    }
+
     socket.on('ip', function(data) {
         if (!data.ip) return;
         let txt;
