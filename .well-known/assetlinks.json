@@ -1,0 +1,8 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+        "namespace": "android_app",
+        "package_name": "com.herokuapp.mydustchat.twa",
+        "sha256_cert_fingerprints": ["20:9C:05:5E:FC:E5:DB:DB:91:4E:A3:5C:86:37:86:B7:94:04:A2:49:17:E3:85:20:17:60:93:08:D4:5B:93:CA"]
+    }
+}]
