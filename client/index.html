@@ -8,6 +8,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="manifest" href="/client/manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -40,7 +41,7 @@
         </nav>
         <div id="chat" class="h-100"></div>
         <div class="input-group mb-3 fixed-bottom">
-            <input type="text" class="form-control" id="txt" placeholder="輸入文字" autocomplete="off">
+            <input type="text" class="form-control" id="txt" placeholder="輸入文字(不能多於300字)" autocomplete="off">
             <div class="input-group-append">
                 <button class="btn btn-success" id="submit">➤</button>
             </div>
@@ -167,17 +168,32 @@
         $(document).ready(function() {
             $('#txt').keydown(function(e) {
                 if (e.keyCode === 13) {
-                    let txt = $("#txt").val();
-                    if (txt === "") return;
-                    if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
-                    document.getElementById("txt").value = "";
-                    socket.emit('client_data', {
-                        'ip': Ip,
-                        'text': txt,
-                    });
+                    textEmit();
                 }
             });
         });
+
+        document.getElementById("submit").onclick = function(e) {
+            textEmit();
+        };
+
+        function textEmit() {
+            let txt = $("#txt").val();
+            if (txt === "") return;
+            if (txt.length > 300) {
+                Swal.fire({
+                    title: '超過300字',
+                    icon: 'warning',
+                    allowEnterKey: false
+                })
+                return document.getElementById("txt").value = "";
+            }
+            document.getElementById("txt").value = "";
+            socket.emit('client_data', {
+                'ip': Ip,
+                'text': txt,
+            });
+        }
 
         function scrollDown() {
             let scrollBottom = $(document).height() - $(window).height() - $(window).scrollTop();
@@ -191,17 +207,6 @@
         function htmlEncode(value) {
             return $('<div/>').text(value).html();
         }
-
-        document.getElementById("submit").onclick = function(e) {
-            let txt = $("#txt").val();
-            if (txt === "") return;
-            if (txt.length > 300) return alert("不能多於300個字(" + txt.length + "/300)");
-            document.getElementById("txt").value = "";
-            socket.emit('client_data', {
-                'ip': Ip,
-                'text': txt,
-            });
-        };
 
         var deferredPrompt;
         window.addEventListener('beforeinstallprompt', function(event) {
