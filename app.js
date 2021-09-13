@@ -26,6 +26,10 @@ app.get('/', function(req, res) {
 app.get('/client', function(req, res) {
     res.redirect('/');
 });
+app.get('/.well-known/assetlinks.json', function(req, res, next) {
+    res.set('Content-Type', 'application/json');
+    res.status(200).send(assetlinks);
+});
 
 
 let content = [];
