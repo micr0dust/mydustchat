@@ -42,6 +42,10 @@ let Today = new Date((new Date(asiaTime)).toISOString());
 console.log(Today)
 let time = Today.getFullYear() + '/' + (Today.getMonth() + 1) + '/' + Today.getDate() + '     ' + Today.getHours() + ':' + Today.getMinutes();
 const random = Math.floor(Math.random() * (4294967 - 42949 + 1) + 42949);
+let connectCheck = true;
+setTimeout(() => {
+    connectCheck = false;
+}, 60000);
 
 async function main() {
     await client.connect();
@@ -49,18 +53,15 @@ async function main() {
     const collection = db.collection('content');
     //const deleteResult = await collection.deleteMany({});
     let findResult = await collection.findOne({ id: 'data' });
-    //console.log('Found documents =>', findResult);
     obj = findResult;
     if (!obj) {
         const insertResult = await collection.insertOne({ id: 'data', data: '[]' });
         obj = insertResult;
     }
-    //console.log(obj.data, typeof JSON.parse(obj.data), typeof Object.values(JSON.parse(obj.data)));
     if (obj.data) content = Object.values(JSON.parse(obj.data));
     content.push({ "name": "日期", "text": time });
     saveData(content);
 }
-main();
 
 async function saveData(data) {
     while (data.length > 100) {
@@ -75,6 +76,8 @@ async function saveData(data) {
 
 
 serv_io.sockets.on('connection', function(socket) {
+    if (connectCheck) main();
+    connectCheck = false;
     const publicIp = require('public-ip')
     publicIp.v4().then((ip) => joinCheck(ip))
     count++;
