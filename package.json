@@ -10,6 +10,7 @@
     "express-static": "^1.2.5",
     "mongodb": "^4.1.1",
     "mongoose": "^6.0.5",
+    "public-ip": "^4.0.4",
     "socket.io": "^2.3.0",
     "web-push": "^3.3.0"
   },
@@ -28,6 +29,5 @@
     "url": "https://github.com/wuilliam104286/mydustchat/issues"
   },
   "homepage": "https://github.com/wuilliam104286/mydustchat#readme",
-  "devDependencies": {},
   "description": ""
 }

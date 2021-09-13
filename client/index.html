@@ -50,35 +50,9 @@
         let name;
         let first_enter = true;
         let serverData;
-
-        async function test() {
-            try {
-                const res = await $.getJSON("https://api.ipify.org?format=json")
-                return postIp(res);
-            } catch (err) {
-                console.log(err);
-            }
-        }
-
-        function postIp(data) {
-            function constIp(data) {
-                Object.defineProperty(window, 'Ip', {
-                    value: data.ip,
-                    configurable: false,
-                    writable: false
-                });
-            }
-            constIp(data);
-            socket.emit('ip', {
-                'ip': data.ip,
-            });
-            return data.ip;
-        }
-
-        test();
+        let Ip
 
         socket.on('connect', () => {
-            test();
             serviceWorker();
         });
 
@@ -91,6 +65,7 @@
                 name = data.user;
                 $('#user').html(name);
             }
+            if (data.ip) Ip = data.ip;
         });
 
         socket.on('online', (data) => {

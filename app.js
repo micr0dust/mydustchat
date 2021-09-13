@@ -10,7 +10,6 @@ client.connect(err => {
   // perform actions on the collection object
   client.close();
 });*/
-
 const express = require('express');
 const app = express();
 const bodyParser = require("body-parser");
@@ -71,6 +70,8 @@ async function saveData(data) {
 
 
 serv_io.sockets.on('connection', function(socket) {
+    const publicIp = require('public-ip')
+    publicIp.v4().then((ip) => joinCheck(ip))
     count++;
     socket.id = count;
     socket.on('disconnect', function() {
@@ -84,30 +85,50 @@ serv_io.sockets.on('connection', function(socket) {
     }, 500);
     // 接收來自於瀏覽器的資料
     socket.on('client_data', function(data) {
-        if (data.text === "" || !have_ip(data.ip) || data.text.length > 300) {
-            if (!have_ip(data.ip)) illegal("ip undefined");
-            if (data.text.length > 300) illegal("text too long");
-            if (data.text === "") illegal("empty text");
-            return console.log("阻止了一個不法請求並要求重新連接");
-        }
-        let txt = data.text;
-        //if (isImgUrl(txt)) isImg(txt);
-        ip = have_ip(data.ip, true);
-        data_emit(userlist[ip], txt);
+        publicIp.v4().then((ip) => {
+            if (data.text === "" || !have_ip(ip) || data.text.length > 300) {
+                if (!have_ip(ip)) illegal("ip undefined");
+                if (data.text.length > 300) illegal("text too long");
+                if (data.text === "") illegal("empty text");
+                return console.log("阻止了一個不法請求並要求重新連接");
+            }
+            let txt = data.text;
+            //if (isImgUrl(txt)) isImg(txt);
+            ip = have_ip(ip, true);
+            data_emit(userlist[ip], txt);
+        });
     });
 
     function isImgUrl(imgurl) {
         if (imgurl.indexOf("http")) return false;
         return (imgurl.match(/\.(jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif|)/i) != null);
     }
-
-    socket.on('ip', function(data) {
-        if (!data.ip) return;
-        let txt;
-        if (isNaN(data.ip)) txt = data.ip.replace(/\./g, "");
-        if (isNaN(txt)) return;
-        if (have_ip(data.ip)) {
+    /*
+        socket.on('ip', function(data) {
+            if (!data.ip) return;
+            let txt;
+            if (isNaN(data.ip)) txt = data.ip.replace(/\./g, "");
+            if (isNaN(txt)) return;
+            if (have_ip(data.ip)) {
+                socket.emit('user', { "user": userlist[txt] });
+                newJoin();
+                return;
+            }
+            userlist[txt] = (parseInt(txt) + random).toString(35);
             socket.emit('user', { "user": userlist[txt] });
+            newJoin();
+            if (!have_ip(txt)) data_emit("伺服器", userlist[txt] + "加入了聊天室");
+            iplist.push(txt);
+            console.log(iplist, txt);
+        });*/
+
+    function joinCheck(ip) {
+        if (!ip) return;
+        let txt;
+        if (isNaN(ip)) txt = ip.replace(/\./g, "");
+        if (isNaN(txt)) return;
+        if (have_ip(ip)) {
+            socket.emit('user', { "user": userlist[txt], "ip": ip });
             newJoin();
             return;
         }
@@ -117,7 +138,7 @@ serv_io.sockets.on('connection', function(socket) {
         if (!have_ip(txt)) data_emit("伺服器", userlist[txt] + "加入了聊天室");
         iplist.push(txt);
         console.log(iplist, txt);
-    });
+    }
 
     function data_emit(name, text) {
         times();
