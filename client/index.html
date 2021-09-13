@@ -54,6 +54,26 @@
         let first_enter = true;
         let serverData;
         let Ip
+        let mobile = true;
+
+        function detectmob() {
+            if (navigator.userAgent.match(/Android/i) ||
+                navigator.userAgent.match(/webOS/i) ||
+                navigator.userAgent.match(/iPhone/i) ||
+                navigator.userAgent.match(/iPad/i) ||
+                navigator.userAgent.match(/iPod/i) ||
+                navigator.userAgent.match(/BlackBerry/i) ||
+                navigator.userAgent.match(/Windows Phone/i)
+            ) {
+                if (window.DeviceOrientationEvent) {
+
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        if (!detectmob()) mobile = false;
 
         socket.on('connect', () => {
             serviceWorker();
@@ -87,7 +107,7 @@
                     first_enter = false;
                 }
                 if (data.news) scrollDown();
-            }, 0);
+            }, 10);
         });
 
         function allLoadAndScroll() {
@@ -125,11 +145,13 @@
                     str += '<div class="d-flex flex-column-reverse text-center text-white"><div class="p-2 bg-success">' + content + '</div></div><br/>';
                 } else if (data.chat[i].name === name) {
                     if (!isImgUrl(content)) str += '<div class="d-flex flex-row-reverse"><div class="p-2 bg-warning">' + content + '</div><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
-                    if (isImgUrl(content)) str += '<div class="d-flex flex-row-reverse"><img src="' + content.split('?')[0] + '" width="25%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
+                    if (isImgUrl(content) && !mobile) str += '<div class="d-flex flex-row-reverse"><img src="' + content.split('?')[0] + '" width="35%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
+                    if (isImgUrl(content) && mobile) str += '<div class="d-flex flex-row-reverse"><img src="' + content.split('?')[0] + '" width="75%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"><div class="p-2 bg-primary text-white">' + speaker + '</div></div>';
                     str += '<p class="font-weight-light text-right">' + data.chat[i].time + '</p>'
                 } else {
                     if (!isImgUrl(content)) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><div class="p-2 bg-warning">' + content + '</div></div>';
-                    if (isImgUrl(content)) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><img src="' + content.split('?')[0] + '" width="35%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"></div>';
+                    if (isImgUrl(content) && !mobile) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><img src="' + content.split('?')[0] + '" width="35%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"></div>';
+                    if (isImgUrl(content) && mobile) str += '<div class="d-flex flex-row"><div class="p-2 bg-info text-white">' + speaker + '</div><img src="' + content.split('?')[0] + '" width="75%" class="rounded" onerror="this.src=\'/client/img/no-image.png\'"></div>';
                     str += '<p class="font-weight-light">' + data.chat[i].time + '</p>'
                 }
             }
@@ -139,7 +161,7 @@
 
         function isImgUrl(imgurl) {
             if (imgurl.indexOf("http")) return false;
-            return (imgurl.match(/\.(jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif|)/i) != null);
+            return (imgurl.match(/(^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+(?:jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif))/i) != null);
         }
 
         $(document).ready(function() {

@@ -19,6 +19,7 @@ const server = app.listen(port, function() {
     console.log('Node server is running..');
 });
 const serv_io = require('socket.io')(server, {});
+const https = require('https');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
@@ -90,41 +91,53 @@ serv_io.sockets.on('connection', function(socket) {
     // 接收來自於瀏覽器的資料
     socket.on('client_data', function(data) {
         publicIp.v4().then((ip) => {
-            if (data.text === "" || !have_ip(ip) || data.text.length > 300) {
-                if (!have_ip(ip)) illegal("ip undefined");
-                if (data.text.length > 300) illegal("text too long");
-                if (data.text === "") illegal("empty text");
-                return console.log("阻止了一個不法請求並要求重新連接");
-            }
-            let txt = data.text;
-            //if (isImgUrl(txt)) isImg(txt);
-            ip = have_ip(ip, true);
-            data_emit(userlist[ip], txt);
+            newMessage(data, ip);
         });
     });
 
-    function isImgUrl(imgurl) {
-        if (imgurl.indexOf("http")) return false;
-        return (imgurl.match(/\.(jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif|)/i) != null);
+    async function newMessage(data, ip) {
+        if (data.text === "" || !have_ip(ip) || data.text.length > 300) {
+            if (!have_ip(ip)) illegal("ip undefined");
+            if (data.text.length > 300) illegal("text too long");
+            if (data.text === "") illegal("empty text");
+            return console.log("阻止了一個不法請求並要求重新連接");
+        }
+        let txt = data.text;
+        if (!notImgUrl(txt)) {
+            await getImage(txt)
+                .then((res) => {
+                    txt = res;
+                })
+                .catch((err) => {
+                    txt = err;
+                });
+        } else {
+            txt = notImgUrl(txt);
+        }
+        ip = have_ip(ip, true);
+        data_emit(userlist[ip], txt);
     }
-    /*
-        socket.on('ip', function(data) {
-            if (!data.ip) return;
-            let txt;
-            if (isNaN(data.ip)) txt = data.ip.replace(/\./g, "");
-            if (isNaN(txt)) return;
-            if (have_ip(data.ip)) {
-                socket.emit('user', { "user": userlist[txt] });
-                newJoin();
-                return;
-            }
-            userlist[txt] = (parseInt(txt) + random).toString(35);
-            socket.emit('user', { "user": userlist[txt] });
-            newJoin();
-            if (!have_ip(txt)) data_emit("伺服器", userlist[txt] + "加入了聊天室");
-            iplist.push(txt);
-            console.log(iplist, txt);
-        });*/
+
+    function getImage(url) {
+        return new Promise((resolve, reject) => {
+            https.get(url, res => {
+                //console.log(res.statusCode);
+                if (res.statusCode === 200) {
+                    resolve(url);
+                } else {
+                    reject(' ' + url);
+                }
+            }).on("error", function(e) {
+                reject(' ' + url);
+            });
+        });
+    }
+
+    function notImgUrl(imgurl) {
+        if (imgurl.indexOf("http")) return imgurl;
+        if (!imgurl.match(/(^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+(?:jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif))/i)) return ' ' + imgurl;
+        return false;
+    }
 
     function joinCheck(ip) {
         if (!ip) return;
