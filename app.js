@@ -43,9 +43,6 @@ console.log(Today)
 let time = Today.getFullYear() + '/' + (Today.getMonth() + 1) + '/' + Today.getDate() + '     ' + Today.getHours() + ':' + Today.getMinutes();
 const random = Math.floor(Math.random() * (4294967 - 42949 + 1) + 42949);
 let connectCheck = true;
-setTimeout(() => {
-    connectCheck = false;
-}, 60000);
 
 async function main() {
     await client.connect();
@@ -59,9 +56,9 @@ async function main() {
         obj = insertResult;
     }
     if (obj.data) content = Object.values(JSON.parse(obj.data));
-    content.push({ "name": "日期", "text": time });
     saveData(content);
 }
+main();
 
 async function saveData(data) {
     while (data.length > 100) {
@@ -76,8 +73,8 @@ async function saveData(data) {
 
 
 serv_io.sockets.on('connection', function(socket) {
-    if (connectCheck) main();
-    connectCheck = false;
+    if (connectCheck) content.push({ "name": "日期", "text": time });
+    if (connectCheck) connectCheck = false;
     const publicIp = require('public-ip')
     publicIp.v4().then((ip) => joinCheck(ip))
     count++;
@@ -157,7 +154,7 @@ serv_io.sockets.on('connection', function(socket) {
         newJoin();
         if (!have_ip(txt)) data_emit("伺服器", userlist[txt] + "加入了聊天室");
         iplist.push(txt);
-        console.log(iplist, txt);
+        console.log(ip);
     }
 
     function data_emit(name, text) {
