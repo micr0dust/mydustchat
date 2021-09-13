@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
     <link rel="manifest" href="/client/manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="alternate" href="android-app://com.herokuapp.mydustchat.twa/https/mydustchat.herokuapp.com" />
 </head>
 
@@ -199,6 +200,7 @@
                         console.log('使用者安裝');
                 });
                 deferredPrompt = null;
+                requestFullscreen();
             }
         }
     </script>
