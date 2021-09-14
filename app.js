@@ -20,6 +20,7 @@ const server = app.listen(port, function() {
 });
 const serv_io = require('socket.io')(server, {});
 const https = require('https');
+var http = require('http');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
@@ -104,6 +105,7 @@ serv_io.sockets.on('connection', function(socket) {
         }
         let txt = data.text;
         if (!notImgUrl(txt)) {
+            txt = txt = googleImg(txt);
             await getImage(txt)
                 .then((res) => {
                     txt = res;
@@ -119,8 +121,20 @@ serv_io.sockets.on('connection', function(socket) {
     }
 
     function getImage(url) {
-        return new Promise((resolve, reject) => {
+        if (!url.indexOf("https")) return new Promise((resolve, reject) => {
             https.get(url, res => {
+                //console.log(res.statusCode);
+                if (res.statusCode === 200) {
+                    resolve(url);
+                } else {
+                    reject(' ' + url);
+                }
+            }).on("error", function(e) {
+                reject(' ' + url);
+            });
+        });
+        return new Promise((resolve, reject) => {
+            http.get(url, res => {
                 //console.log(res.statusCode);
                 if (res.statusCode === 200) {
                     resolve(url);
@@ -133,8 +147,18 @@ serv_io.sockets.on('connection', function(socket) {
         });
     }
 
+    function googleImg(imgurl) {
+        if (imgurl.match(/https:\/\/www\.google\.com(.*)?\/imgres\?imgurl=/i)) {
+            imgurl = imgurl.replace(/https:\/\/www\.google\.com(.*)?\/imgres\?imgurl=/i, "");
+            imgurl = imgurl.split('&imgrefurl=')[0];
+            imgurl = decodeURIComponent(imgurl);
+        }
+        return imgurl;
+    }
+
     function notImgUrl(imgurl) {
         if (imgurl.indexOf("http")) return imgurl;
+        imgurl = googleImg(imgurl);
         if (!imgurl.match(/(^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+(?:jpeg|jpg|jfif|pjpeg|pjp|gif|png|svg|gif|webp|apng|avif))/i)) return ' ' + imgurl;
         return false;
     }

@@ -1,33 +1,34 @@
 {
-  "name": "mydustchat",
-  "version": "1.0.0",
-  "main": "app.js",
-  "dependencies": {
-    "@types/mongoose": "^5.11.97",
-    "body-parser": "^1.19.0",
-    "cross-env": "^7.0.2",
-    "express": "^4.16.3",
-    "express-static": "^1.2.5",
-    "mongodb": "^4.1.1",
-    "mongoose": "^6.0.5",
-    "public-ip": "^4.0.4",
-    "socket.io": "^2.3.0",
-    "web-push": "^3.3.0"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
-  },
-  "author": "Microdust",
-  "license": "ISC",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wuilliam104286/mydustchat.git"
-  },
-  "keywords": [],
-  "bugs": {
-    "url": "https://github.com/wuilliam104286/mydustchat/issues"
-  },
-  "homepage": "https://github.com/wuilliam104286/mydustchat#readme",
-  "description": ""
+    "name": "mydustchat",
+    "version": "1.0.0",
+    "main": "app.js",
+    "dependencies": {
+        "@types/mongoose": "^5.11.97",
+        "body-parser": "^1.19.0",
+        "cross-env": "^7.0.2",
+        "express": "^4.16.3",
+        "express-static": "^1.2.5",
+
+        "mongodb": "^4.1.1",
+        "mongoose": "^6.0.5",
+        "public-ip": "^4.0.4",
+        "socket.io": "^2.3.0",
+        "web-push": "^3.3.0"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js"
+    },
+    "author": "Microdust",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/wuilliam104286/mydustchat.git"
+    },
+    "keywords": [],
+    "bugs": {
+        "url": "https://github.com/wuilliam104286/mydustchat/issues"
+    },
+    "homepage": "https://github.com/wuilliam104286/mydustchat#readme",
+    "description": ""
 }
