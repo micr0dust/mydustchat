@@ -10,6 +10,6 @@
 - 聊天室伺服器在美國，資料庫在台灣，所以可能連線會有點延遲
 - 聊天室內使用者傳什麼我不負責任喔
 
-![https://raw.githubusercontent.com/wuilliam104286/image_saves/master/img/button/btn-web-red-ch.png](https://mydustchat.herokuapp.com/)
+![https://mydustchat.herokuapp.com/](https://raw.githubusercontent.com/wuilliam104286/image_saves/master/img/button/btn-web-red-ch.png)
 
 ![](https://truth.bahamut.com.tw/s01/202109/d8f48bf26e006512e13d10bc8b43aff0.PNG?w=1000)
