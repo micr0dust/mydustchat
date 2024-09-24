@@ -1,10 +1,6 @@
-var authData = {
-    user: function(info) {
-        return "microdust"
-    },
-    password: function(warning) {
-        return "ux7e4ywp"
-    }
-};
+require('dotenv').config();
 
-module.exports = authData;
+module.exports =  {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD
+};

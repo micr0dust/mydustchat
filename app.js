@@ -1,7 +1,7 @@
 const { MongoClient } = require('mongodb');
 const auth = require('./client/js/auth.js');
-//const url = 'mongodb://' + auth.user() + ':' + auth.password() + '@127.0.0.1:27017/test';
-const url = "mongodb+srv://" + auth.user() + ":" + auth.password() + "@mydustchat.xvwyj.mongodb.net/test?retryWrites=true&w=majority";
+//const url = 'mongodb://' + auth.user + ':' + auth.password + '@127.0.0.1:27017/test';
+const url = "mongodb+srv://" + auth.user + ":" + auth.password + "@mydustchat.xvwyj.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(url, { useNewUrlParser: true, useUnifiedTopology: true });
 const dbName = 'test';
 /*
